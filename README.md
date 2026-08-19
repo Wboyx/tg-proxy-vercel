@@ -61,3 +61,57 @@ POLL_TIMEOUT_SECONDS=15
 - فقط مسیرهای /bot عبور می‌کنند.
 - هیچ Tokenی در کد ذخیره نمی‌شود.
 - Log Drain عمومی فعال نکن.
+
+---
+
+## نسخه ۲ — درس حادثه 2026-08-19
+
+آدرس زیر روی SNI سوخت و از سرور ایران TLS نمی‌داد:
+
+```text
+tg-proxy-vercel-one.vercel.app
+```
+
+اما تست نشان داد کل دامنه سالم است و فقط همان Hostname بسته شده بود:
+
+```text
+fox-brain.vercel.app -> code 307 OPEN
+```
+
+درس: وقتی یک نام سوخت، لازم نیست پلتفرم عوض شود. کافی است همین مخزن با نام تازه و خنثی دوباره Deploy شود.
+
+نام خوب انتخاب نکن مثل این‌ها:
+
+```text
+tg-proxy
+telegram-relay
+vpn-bridge
+```
+
+نام خنثی انتخاب کن مثل این:
+
+```text
+mehti-gw-4821
+```
+
+## مسیر تشخیص جدید
+
+```bash
+curl -s https://NAME.vercel.app/diag
+```
+
+خروجی، تأخیر واقعی رله تا تلگرام را نشان می‌دهد:
+
+```text
+{"ok":true,"upstream":"ok","relayToTelegramMs":120,"totalMs":130}
+```
+
+## برچسب خرابی
+
+اگر مسیر رله به تلگرام قطع شود، پاسخ getUpdates این شکل می‌شود:
+
+```text
+{"ok":true,"result":[],"_relay":"upstream-failed"}
+```
+
+ربات کرش نمی‌کند، ولی خرابی دیگر پنهان نمی‌ماند.
